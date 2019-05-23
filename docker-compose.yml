@@ -1,0 +1,53 @@
+version: '3'
+services:
+  postgres:
+    image: 'postgres:latest'
+  redis:
+    image: 'redis:latest'
+  nginx:
+    # make sure nginx is always running
+    # restart if not
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - '3050:80'
+  api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      # leave folder as is don't override
+      - /app/node_modules
+      # copy /server to /app in the container
+      - ./server:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGDATABASE=postgres
+      - PGPASSWORD=postgres_password
+      - PGPORT=5432
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      # leave folder as is don't override
+      - /app/node_modules
+      # copy /client to /app in the container
+      - ./client:/app
+  worker:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes:
+      # leave folder as is don't override
+      - /app/node_modules
+      # copy /worker to /app in the container
+      - ./worker:/app
+    environment:
+      - "REDIS_HOST=redis"
+      - "REDIS_PORT=6379"
