@@ -1,28 +1,22 @@
-# Any time Docker is used 'sudo' is required
 sudo: required
-
-# Install copy of docker in running container
 services:
   - docker
 
-# Build docker image before test are run
 before_install:
-  - docker build -t dvsdockermtl/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t dvsdockermlt/react-test -f ./client/Dockerfile.dev ./client
 
-# Commands to run test suite
-# -- --watchAll=false to exit test so it is not hanging
 script:
-  - docker run -e CI=true dvsdockermtl/react-test npm run test -- --watchAll=false
+  - docker run dvsdockermlt/react-test npm test -- --coverage
 
 after_success:
-  - docker build -t dvsdockermtl/multi-client ./client
-  - docker build -t dvsdockermtl/multi-nginx ./nginx
-  - docker build -t dvsdockermtl/multi-server ./server
-  - docker build -t dvsdockermtl/multi-worker ./worker
-  # Log in to Docker CLI
+  - docker build -t dvsdockermlt/multi-client ./client
+  - docker build -t dvsdockermlt/multi-nginx ./nginx
+  - docker build -t dvsdockermlt/multi-server ./server
+  - docker build -t dvsdockermlt/multi-worker ./worker
+  # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # Take images and push to Docker hub
-  - docker push dvsdockermtl/multi-client
-  - docker push dvsdockermtl/multi-nginx
-  - docker push dvsdockermtl/multi-server
-  - docker push dvsdockermtl/multi-worker
+  # Take those images and push them to docker hub
+  - docker push dvsdockermlt/multi-client
+  - docker push dvsdockermlt/multi-nginx
+  - docker push dvsdockermlt/multi-server
+  - docker push dvsdockermlt/multi-worker
