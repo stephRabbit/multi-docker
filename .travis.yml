@@ -6,7 +6,7 @@ before_install:
   - docker build -t dvsdockermlt/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run -e CI=true dvsdockermtl/react-test npm run test -- --watchAll=false
+  - docker run -e CI=true dvsdockermlt/react-test npm run test -- --watchAll=false
 
 after_success:
   - docker build -t dvsdockermlt/multi-client ./client
