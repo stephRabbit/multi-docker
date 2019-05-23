@@ -1,0 +1,28 @@
+# Any time Docker is used 'sudo' is required
+sudo: required
+
+# Install copy of docker in running container
+services:
+  - docker
+
+# Build docker image before test are run
+before_install:
+  - docker build -t dvsdockermtl/react-test -f ./client/Dockerfile.dev ./client
+
+# Commands to run test suite
+# -- --watchAll=false to exit test so it is not hanging
+script:
+  - docker run -e CI=true dvsdockermtl/react-test npm run test -- --watchAll=false
+
+after_success:
+  - docker build -t dvsdockermtl/multi-client ./client
+  - docker build -t dvsdockermtl/multi-nginx ./nginx
+  - docker build -t dvsdockermtl/multi-server ./server
+  - docker build -t dvsdockermtl/multi-worker ./worker
+  # Log in to Docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take images and push to Docker hub
+  - docker push dvsdockermtl/multi-client
+  - docker push dvsdockermtl/multi-nginx
+  - docker push dvsdockermtl/multi-server
+  - docker push dvsdockermtl/multi-worker
