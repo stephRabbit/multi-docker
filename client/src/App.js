@@ -12,9 +12,9 @@ class App extends Component {
         <div className='App'>
           <header className='App-header'>
             <img src={logo} className='App-logo' alt='logo' />
-            <h1 className='App-title'>Welcome to React</h1>
-            <Link to='/'>Home</Link>
-            <Link to='/info'>Info Page</Link>
+            <h1 className='App-title'>::FibCalc::</h1>
+            <Link style={{ color: 'white'}} to='/'>Home</Link>
+            <Link style={{ color: 'white'}} to='/info'>Info Page</Link>
           </header>
           <div>
             <Route exact path='/' component={Fib} />
